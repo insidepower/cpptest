@@ -5,7 +5,7 @@
   ##  USAGE:
   ##  IMP NOTE:
   ##  COMPILATION:
-  ##  gcc -D_GNU_SOURCE -c mem memDebug.c memDebug.h
+  ##  gcc -D_GNU_SOURCE -c -g -o mem memDebug.c
   ##  gcc -g ll.h mem ll.c
   #########################################################################*/
 /*==========================================================================
@@ -75,20 +75,24 @@ exit_init_ll:
   ==  RETURN:
   ==  IMP NOTE:
   =========================================================================*/
-void add_ll(MODIF llBox * pllBox, MODIF ll *pll)
+void add_ll(MODIF llBox * pllBox, MODIF ll **pll)
 {
+	assert(NULL!=pllBox);
 	pthread_mutex_lock(pllBox->pMutex);
+	ll * pllnew = NULL;
 	if(NULL==pllBox->pTail){
 		/// link-list is empty
 		assert(NULL==pllBox->pHead);
-		pllBox->pHead=(ll *)MALLOC(sizeof(ll), pllBox->llBoxNm);
-		pllBox->pTail=pllBox->pHead;
+		pllnew = (ll *)MALLOC(sizeof(ll), pllBox->llBoxNm);
+		pllBox->pHead = pllnew;
+		pllBox->pTail = pllBox->pHead;
 	}else{
-		ll * pllnew = (ll *) MALLOC(sizeof(ll), pllBox->llBoxNm);
-		pllBox->pTail->pNext=pllnew;
+		pllnew = (ll *) MALLOC(sizeof(ll), pllBox->llBoxNm);
+		pllBox->pTail->pNext = pllnew;
 	}
 
 	++pllBox->total;
+	*pll = pllnew;
 	pthread_mutex_unlock(pllBox->pMutex);
 }
 
@@ -124,23 +128,9 @@ void end_ll(MODIF llBox ** p_pllBox)
 	pthread_mutex_unlock(pMutexTemp);
 
 	/// freeing pllBox->pMutex
+	/// INFO: mutex must be destroyed b4 free and reuse
 	pthread_mutex_destroy(pMutexTemp);
 	FREE(pMutexTemp, "llMutex");
 	pMutexTemp=NULL;
 }
 
-int main(void)
-{
-	llBox * myll=NULL;
-	init_ll(&myll);
-	if(NULL==myll){
-		PERROR("Err! init_ll() failed to allocate\n");
-	}
-	crop_memPrintTable();
-	end_ll(&myll);
-	crop_memPrintTable();
-
-}
-
-//NOTE: mutex must be destroyed with pthread_mutex_destroy() before freeing or 
-//reusing mutex storage.

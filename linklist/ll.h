@@ -2,6 +2,8 @@
   ==  INCLUDES
   ==========================================================================*/
 #include <pthread.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <assert.h>
 #include <stdio.h>
 #include "memDebug.h"
@@ -58,3 +60,6 @@ typedef struct llBox_tag
 /*==========================================================================
   ==  FUNCTION PROTOTYPES
   ==========================================================================*/
+void init_ll(llBox ** p_pllBox);
+void add_ll(MODIF llBox * pllBox, MODIF ll **pll);
+void end_ll(MODIF llBox ** p_pllBox);
