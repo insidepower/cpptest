@@ -108,9 +108,8 @@ void end_ll(MODIF llBox ** p_pllBox)
 	pthread_mutex_lock(pllBox->pMutex);
 	char * str_name = NULL;
 	pthread_mutex_t * pMutexTemp = pllBox->pMutex;
-	str_name = (char *) MALLOC(strlen(pllBox->llBoxNm), "boxToBeDelName");
+	str_name = (char *) MALLOC(strlen(pllBox->llBoxNm)+1, "boxToBeDelName");
 	strcpy(str_name, pllBox->llBoxNm);
-	printf("str_name=%s\n", str_name);
 
 	/// TODO: free remaining ll node
 	/// NOTE: pllBox->pMutex will be freed in the end, since still in used
@@ -122,10 +121,10 @@ void end_ll(MODIF llBox ** p_pllBox)
 
 	FREE(str_name, "boxToBeDelName");
 	str_name=NULL;
-	pthread_mutex_unlock(pllBox->pMutex);
+	pthread_mutex_unlock(pMutexTemp);
 
 	/// freeing pllBox->pMutex
-	pthread_mutex_destroy(pllBox->pMutex);
+	pthread_mutex_destroy(pMutexTemp);
 	FREE(pMutexTemp, "llMutex");
 	pMutexTemp=NULL;
 }
