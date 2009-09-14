@@ -76,14 +76,16 @@ exit_init_ll:
   ==  RETURN:
   ==  IMP NOTE:
   =========================================================================*/
-void add_ll(MODIF llBox * pllBox, MODIF ll **pll)
+void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll)
 {
+	llBox * pllBox = *p_pllBox;
 	assert(NULL!=pllBox);
 	pthread_mutex_lock(pllBox->pMutex);
 	ll * pllnew = NULL;
 	if(NULL==pllBox->pTail){
 		/// link-list is empty
 		assert(NULL==pllBox->pHead);
+		assert(0==pllBox->total);
 		pllnew = (ll *)MALLOC(sizeof(ll), pllBox->llBoxNm);
 		pllBox->pHead = pllnew;
 		pllBox->pTail = pllBox->pHead;
@@ -92,8 +94,9 @@ void add_ll(MODIF llBox * pllBox, MODIF ll **pll)
 		pllBox->pTail->pNext = pllnew;
 	}
 
+	pllnew->pNext=NULL;
+	*p_pll = pllnew;
 	++pllBox->total;
-	*pll = pllnew;
 	pthread_mutex_unlock(pllBox->pMutex);
 }
 
@@ -105,8 +108,56 @@ void add_ll(MODIF llBox * pllBox, MODIF ll **pll)
   ==  INPUTS:
   ==  OUTPUTS:
   ==  RETURN:
+  ==  IMP NOTE: 
+  ==     rm_ll() does not free pv/ struct pointed by pv
+  =========================================================================*/
+void rm_ll(MODIF llBox ** p_pllBox, void **pv)
+{
+	llBox * pllBox = *p_pllBox;
+	assert(NULL!=pllBox);
+	pthread_mutex_lock(pllBox->pMutex);
+
+	assert(pllBox->total > 0);
+	ll * pllToBeDel = pllBox->pHead;
+	*pv = pllToBeDel->pv;
+
+	pllBox->pHead = pllBox->pHead->pNext;
+	--pllBox->total;
+
+	/// LEAK-CHK:pv should be freed outside this function
+	pllToBeDel->pNext=NULL;
+	pllToBeDel->pv=NULL;
+	FREE(pllToBeDel, pllBox->llBoxNm);
+
+	pthread_mutex_unlock(pllBox->pMutex);
+}
+
+/*=========================================================================
+  ==  @ print_ll @
+  ==
+  ==  DESC: traverse through and print out the link-list
+  ==  USAGE:
+  ==  INPUTS:
+  ==  OUTPUTS:
+  ==  RETURN:
   ==  IMP NOTE:
   =========================================================================*/
+void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv))
+{
+	assert(NULL!=pllBox);
+	pthread_mutex_lock(pllBox->pMutex);
+
+	int count=pllBox->total;
+	ll * pllTemp = pllBox->pHead;
+	while(count--){
+		assert(NULL!=pllTemp);
+		printf("(%d):", count);
+		pvPrint(pllTemp->pv);
+		pllTemp=pllTemp->pNext;
+	}
+	assert(NULL==pllTemp);
+	pthread_mutex_unlock(pllBox->pMutex);
+}
 
 /*=========================================================================
   ==  @ end_ll @

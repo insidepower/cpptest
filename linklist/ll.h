@@ -61,5 +61,7 @@ typedef struct llBox_tag
   ==  FUNCTION PROTOTYPES
   ==========================================================================*/
 void init_ll(llBox ** p_pllBox);
-void add_ll(MODIF llBox * pllBox, MODIF ll **pll);
+void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll);
 void end_ll(MODIF llBox ** p_pllBox);
+void rm_ll(MODIF llBox ** p_pllBox, void **pv);
+void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv));
