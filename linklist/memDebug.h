@@ -22,11 +22,12 @@ typedef enum {
 
 typedef struct mem_log_tag {
    struct mem_log_tag * pNext;
-   unsigned char * ptr; //will include 2*FENCE_TOP+data+2*FENCE_BOTTOM
+	/* NOTE: ptr will include 2*FENCE_TOP+data+2*FENCE_BOTTOM */
+   unsigned char * ptr; 
    unsigned char * ptr_start;
    unsigned char * ptr_end;
    int len;
-   int used; //may be wrong for array/overlapping memcpy, used as ref only
+   int used; /*may be wrong for array/overlapping memcpy, used as ref only */
    int freqUsage;
    char * objName; //try to use different variable name to help in debug
    const char * fileId;

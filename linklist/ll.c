@@ -18,6 +18,7 @@
 int llBox_cnt=1;
 /// global mutex for init_ll
 pthread_mutex_t gpMutex=PTHREAD_MUTEX_INITIALIZER;
+
 /*++++++++++++++++++++++++++++< FUNCTION >++++++++++++++++++++++++++++++++*/
 /*=========================================================================
   ==  @ init_ll @
@@ -68,7 +69,7 @@ exit_init_ll:
 /*=========================================================================
   ==  @ add_ll @
   ==
-  ==  DESC: all node to pllBox
+  ==  DESC: add node to the tail pllBox
   ==  USAGE:
   ==  INPUTS:
   ==  OUTPUTS:
@@ -95,6 +96,17 @@ void add_ll(MODIF llBox * pllBox, MODIF ll **pll)
 	*pll = pllnew;
 	pthread_mutex_unlock(pllBox->pMutex);
 }
+
+/*=========================================================================
+  ==  @ rm_ll @
+  ==
+  ==  DESC: delete first node from pllBox 
+  ==  USAGE:
+  ==  INPUTS:
+  ==  OUTPUTS:
+  ==  RETURN:
+  ==  IMP NOTE:
+  =========================================================================*/
 
 /*=========================================================================
   ==  @ end_ll @

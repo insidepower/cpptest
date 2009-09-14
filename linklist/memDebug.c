@@ -39,11 +39,11 @@ unsigned char fenceByte[4]={0xFA, 0xCA, 0xDE, 0x69};
 
 #ifdef DEBUG_MEM
 #define CROP_ASSERT(A, B, C, D) \
-   if(A)\
-      NULL;\
-   else\
-      throwErr(B,C, D);\
-      assert(A)
+   if(!(A))\
+	{\
+		throwErr(B,C, D);\
+		assert(A);\
+	}
 #else
 #define CROP_ASSERT(A, B, C, D) assert(A)
 #endif

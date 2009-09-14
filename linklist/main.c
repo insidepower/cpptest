@@ -34,19 +34,27 @@ int main(void)
 	//------------------------------------------------- add node //
 	int cnt=1;
 	ll * pll=NULL;
+	tdUserData * ptdUserData = NULL;
+	ptdUserData = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData");
 	add_ll(myll, &pll);
 	assert(NULL!=pll);
-	pll->name[0]='1';
-	pll->total=cnt++;
+	pll->pv=ptdUserData;
+	ptdUserData->name[0]='1';
+	ptdUserData->total=cnt++;
 
 	add_ll(myll, &pll);
 	assert(NULL!=pll);
-	pll->name[0]='2';
-	pll->total=cnt++;
+	ptdUserData = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData");
+	pll->pv=ptdUserData;
+	ptdUserData->name[0]='2';
+	ptdUserData->total=cnt++;
+
+	//------------------------------------------------- delete node //
 
 	//-------------------------------------------- end //
 	crop_memPrintTable();
 	end_ll(&myll);
 	crop_memPrintTable();
-
+	
+	return 0;
 }
