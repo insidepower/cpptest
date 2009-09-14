@@ -35,7 +35,9 @@ int main(void)
 	llBox * myll=NULL;
 	init_ll(&myll);
 	if(NULL==myll){
-		PERROR("Err! init_ll() failed to allocate\n");
+		PERROR("init_ll() failed to allocate\n");
+		crop_memPrintTable();
+		return -1;
 	}
 
 	//------------------------------------------------- add node //
@@ -67,6 +69,33 @@ int main(void)
 	printf("deleting 2\n");
 	rm_ll(&myll, (void **) &ptdUserData);
 	FREE(ptdUserData, "tdUserData");
+	crop_memPrintTable();
+
+	//------------------------------------------- add node (test semaphore)//
+	ll * pll2=NULL;
+	tdUserData * ptdUserData2 = NULL;
+	ptdUserData2 = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData2");
+	add_ll(&myll, &pll2);
+	assert(NULL!=pll2);
+	pll2->pv=ptdUserData2;
+	strcpy(ptdUserData2->name, "haha1");
+	ptdUserData2->seq=cnt++;
+
+	add_ll(&myll, &pll2);
+	assert(NULL!=pll2);
+	ptdUserData2 = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData2");
+	pll2->pv=ptdUserData2;
+	strcpy(ptdUserData2->name, "haha2");
+	ptdUserData2->seq=cnt++;
+
+	//------------------------------------------- get node (test semaphore)//
+	printf("deleting 1\n");
+	get_ll(&myll, (void **) &ptdUserData2);
+	FREE(ptdUserData2, "tdUserData2");
+	crop_memPrintTable();
+	printf("deleting 2\n");
+	get_ll(&myll, (void **) &ptdUserData2);
+	FREE(ptdUserData2, "tdUserData2");
 	crop_memPrintTable();
 
 	//-------------------------------------------- end //

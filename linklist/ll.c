@@ -40,9 +40,20 @@ void init_ll(llBox ** p_pllBox)
 	sprintf(str_name, "myll%d", llBox_cnt++);
 	if(MAX_LL_INIT_CALL<=llBox_cnt){
 		/// number of init() call exceed what program can handle
-		PERROR("Err! llBox_cnt==MAX_LL_INIT_CALL\n");
+		PERROR("llBox_cnt==MAX_LL_INIT_CALL\n");
 		FREE(str_name, "myll_name");
 		p_pllBox=NULL;
+		goto exit_init_ll;
+	}
+
+	//------------------------------------------ init semaphore used by llBox//
+	sem_t sem_llBox;
+	if(sem_init(&sem_llBox, 0, 0) < 0){
+	//if(sem_init(&sem_llBox, 0, 0x80000000) < 0){
+		FREE(str_name, "str_name_init");
+		p_pllBox=NULL;
+		PERROR("semaphore init failed\n");
+		perror("Err! semaphore init failed");
 		goto exit_init_ll;
 	}
 
@@ -52,11 +63,13 @@ void init_ll(llBox ** p_pllBox)
 	pthread_mutex_init(pMutex, NULL);
 	printf("szof pthread_mutex_t=%d\n", sizeof(pthread_mutex_t));
 
+
 	//---------------------------------------------- init llBox//
 	llBox * pllBox = (llBox *) MALLOC(sizeof(llBox), str_name);
 	pllBox->pMutex = pMutex;
 	pllBox->pHead = NULL;
 	pllBox->pTail = pllBox->pHead; //at start, pTail=pHead
+	pllBox->pSem = &sem_llBox;
 	pllBox->total = 0;
 	pllBox->llBoxNm=str_name;
 
@@ -97,6 +110,7 @@ void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll)
 	pllnew->pNext=NULL;
 	*p_pll = pllnew;
 	++pllBox->total;
+	sem_post(pllBox->pSem);
 	pthread_mutex_unlock(pllBox->pMutex);
 }
 
@@ -124,12 +138,36 @@ void rm_ll(MODIF llBox ** p_pllBox, void **pv)
 	pllBox->pHead = pllBox->pHead->pNext;
 	--pllBox->total;
 
+	if(0==pllBox->total){
+		/// if last node, set tail to NULL
+		assert(NULL==pllBox->pHead);
+		pllBox->pTail=NULL;
+	}
+
 	/// LEAK-CHK:pv should be freed outside this function
 	pllToBeDel->pNext=NULL;
 	pllToBeDel->pv=NULL;
 	FREE(pllToBeDel, pllBox->llBoxNm);
 
 	pthread_mutex_unlock(pllBox->pMutex);
+}
+
+/*=========================================================================
+  ==  @ get_ll @
+  ==
+  ==  DESC: 
+  == 	try to get one node from ll, if no node available, pend on 
+  ==	semaphore
+  ==  USAGE:
+  ==  INPUTS:
+  ==  OUTPUTS:
+  ==  RETURN:
+  ==  IMP NOTE:
+  =========================================================================*/
+void get_ll(MODIF llBox ** p_pllBox, void **pv)
+{
+	sem_wait((*p_pllBox)->pSem);
+	rm_ll(p_pllBox, pv);
 }
 
 /*=========================================================================
@@ -151,8 +189,10 @@ void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv))
 	ll * pllTemp = pllBox->pHead;
 	while(count--){
 		assert(NULL!=pllTemp);
-		printf("(%d):", count);
-		pvPrint(pllTemp->pv);
+		printf("(%d):pllTemp->pv=%p", count, pllTemp->pv);
+		if(NULL!=pvPrint){
+			pvPrint(pllTemp->pv);
+		}
 		pllTemp=pllTemp->pNext;
 	}
 	assert(NULL==pllTemp);
