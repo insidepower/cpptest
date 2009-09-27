@@ -12,6 +12,7 @@
   ==  INCLUDES
   ==========================================================================*/
 #include "ll.h"
+#include "global.h"
 /*==========================================================================
   ==  GLOBAL VARIABLES
   ==========================================================================*/
@@ -37,7 +38,7 @@ void init_ll(llBox ** p_pllBox)
 	char * str_name = (char *) MALLOC(MAX_FILE_NM_LEN, "str_name_init");
 	/// LEAK-CHK: myllx of str_name must not exceed MAX_FILE_NM_LEN
 	sprintf(str_name, "myllBox%d", llBox_cnt++);
-	assert((MAX_FILE_NM_LEN-strlen(str_name)) > 0 );
+	STR_LEN_CHECK(MAX_FILE_NM_LEN, strlen(str_name));
 	if(MAX_LL_INIT_CALL<=llBox_cnt){
 		/// number of init() call exceed what program can handle
 		PERROR("llBox_cnt==MAX_LL_INIT_CALL\n");
@@ -69,6 +70,7 @@ void init_ll(llBox ** p_pllBox)
 	char * strNodeNm = (char *) MALLOC(MAX_FILE_NM_LEN, "nodeName");
 	sprintf(strNodeNm, "%s_node", str_name);
 	assert((MAX_FILE_NM_LEN-strlen(strNodeNm)) > 0 );
+	STR_LEN_CHECK(MAX_FILE_NM_LEN, strlen(strNodeNm));
 
 	llBox * pllBox = (llBox *) MALLOC(sizeof(llBox), str_name);
 	pllBox->pMutex = pMutex;
