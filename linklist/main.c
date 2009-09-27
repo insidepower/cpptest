@@ -42,24 +42,25 @@ int main(void)
 
 	//------------------------------------------------- add node //
 	int cnt=1;
-	ll * pll=NULL;
+	//ll * pll=NULL;
 	tdUserData * ptdUserData = NULL;
 	ptdUserData = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData");
-	add_ll(&myll, &pll);
-	assert(NULL!=pll);
-	pll->pv=ptdUserData;
 	strcpy(ptdUserData->name, "haha1");
 	ptdUserData->seq=cnt++;
+	add_ll(&myll, (void **)&ptdUserData);
+	//assert(NULL!=pll);
+	//pll->pv=ptdUserData;
 
-	add_ll(&myll, &pll);
-	assert(NULL!=pll);
+	//assert(NULL!=pll);
 	ptdUserData = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData");
-	pll->pv=ptdUserData;
+	//pll->pv=ptdUserData;
 	strcpy(ptdUserData->name, "haha2");
 	ptdUserData->seq=cnt++;
+	add_ll(&myll, (void **)&ptdUserData);
 
 	//------------------------------------------------- traverse node //
 	print_ll(myll, &print_userData);
+	crop_memPrintTable();
 
 	//------------------------------------------------- delete node //
 	printf("deleting 1\n");
@@ -72,21 +73,22 @@ int main(void)
 	crop_memPrintTable();
 
 	//------------------------------------------- add node (test semaphore)//
-	ll * pll2=NULL;
+	//ll * pll2=NULL;
 	tdUserData * ptdUserData2 = NULL;
 	ptdUserData2 = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData2");
-	add_ll(&myll, &pll2);
-	assert(NULL!=pll2);
-	pll2->pv=ptdUserData2;
+	//assert(NULL!=pll2);
+	//pll2->pv=ptdUserData2;
 	strcpy(ptdUserData2->name, "haha1");
 	ptdUserData2->seq=cnt++;
+	add_ll(&myll, (void **)&ptdUserData2);
 
-	add_ll(&myll, &pll2);
-	assert(NULL!=pll2);
+	//assert(NULL!=pll2);
 	ptdUserData2 = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData2");
-	pll2->pv=ptdUserData2;
+	//pll2->pv=ptdUserData2;
 	strcpy(ptdUserData2->name, "haha2");
 	ptdUserData2->seq=cnt++;
+	add_ll(&myll, (void **)&ptdUserData2);
+	crop_memPrintTable();
 
 	//------------------------------------------- get node (test semaphore)//
 	printf("deleting 1\n");

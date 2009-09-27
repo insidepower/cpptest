@@ -34,14 +34,14 @@ void init_ll(llBox ** p_pllBox)
 {
 	pthread_mutex_lock(&gpMutex);
 	//---------------------------------------------- init llBox's name//
-	/// IMP: myll_name should be freed when llBox is deleted
 	char * str_name = (char *) MALLOC(MAX_FILE_NM_LEN, "str_name_init");
 	/// LEAK-CHK: myllx of str_name must not exceed MAX_FILE_NM_LEN
-	sprintf(str_name, "myll%d", llBox_cnt++);
+	sprintf(str_name, "myllBox%d", llBox_cnt++);
+	assert((MAX_FILE_NM_LEN-strlen(str_name)) > 0 );
 	if(MAX_LL_INIT_CALL<=llBox_cnt){
 		/// number of init() call exceed what program can handle
 		PERROR("llBox_cnt==MAX_LL_INIT_CALL\n");
-		FREE(str_name, "myll_name");
+		FREE(str_name, "str_name_init");
 		p_pllBox=NULL;
 		goto exit_init_ll;
 	}
@@ -65,6 +65,11 @@ void init_ll(llBox ** p_pllBox)
 
 
 	//---------------------------------------------- init llBox//
+	/// name to be used by all sub-node added to this llBox
+	char * strNodeNm = (char *) MALLOC(MAX_FILE_NM_LEN, "nodeName");
+	sprintf(strNodeNm, "%s_node", str_name);
+	assert((MAX_FILE_NM_LEN-strlen(strNodeNm)) > 0 );
+
 	llBox * pllBox = (llBox *) MALLOC(sizeof(llBox), str_name);
 	pllBox->pMutex = pMutex;
 	pllBox->pHead = NULL;
@@ -72,6 +77,7 @@ void init_ll(llBox ** p_pllBox)
 	pllBox->pSem = &sem_llBox;
 	pllBox->total = 0;
 	pllBox->llBoxNm=str_name;
+	pllBox->llBoxNodeNm=strNodeNm;
 
 	*p_pllBox = pllBox;
 
@@ -87,28 +93,33 @@ exit_init_ll:
   ==  INPUTS:
   ==  OUTPUTS:
   ==  RETURN:
-  ==  IMP NOTE:
+  ==  IMP NOTE: Ownership of pv is transferred from caller function to 	
+  				add_ll upon calling add_ll, thus no further modification of
+				pv is allowed beyond this point
   =========================================================================*/
-void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll)
+void add_ll(MODIF llBox ** p_pllBox, MODIF void **ppv)
 {
+	assert(NULL!=*p_pllBox);
+	pthread_mutex_lock((*p_pllBox)->pMutex);
 	llBox * pllBox = *p_pllBox;
-	assert(NULL!=pllBox);
-	pthread_mutex_lock(pllBox->pMutex);
+
 	ll * pllnew = NULL;
-	if(NULL==pllBox->pTail){
+	if(0==pllBox->total){
 		/// link-list is empty
 		assert(NULL==pllBox->pHead);
-		assert(0==pllBox->total);
-		pllnew = (ll *)MALLOC(sizeof(ll), pllBox->llBoxNm);
+		assert(NULL==pllBox->pTail);
+		pllnew = (ll *)MALLOC(sizeof(ll), pllBox->llBoxNodeNm);
 		pllBox->pHead = pllnew;
 		pllBox->pTail = pllBox->pHead;
 	}else{
-		pllnew = (ll *) MALLOC(sizeof(ll), pllBox->llBoxNm);
+		pllnew = (ll *) MALLOC(sizeof(ll), pllBox->llBoxNodeNm);
 		pllBox->pTail->pNext = pllnew;
 	}
 
 	pllnew->pNext=NULL;
-	*p_pll = pllnew;
+	pllnew->pv=*ppv;
+	*ppv=NULL;
+	//*p_pll = pllnew;
 	++pllBox->total;
 	sem_post(pllBox->pSem);
 	pthread_mutex_unlock(pllBox->pMutex);
@@ -119,7 +130,9 @@ void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll)
   ==
   ==  DESC: delete first node from pllBox 
   ==  USAGE:
-  ==  INPUTS:
+  ==  INPUTS: 
+  		p_pllBox : 
+		pv : data pointer to return to caller function
   ==  OUTPUTS:
   ==  RETURN:
   ==  IMP NOTE: 
@@ -127,9 +140,9 @@ void add_ll(MODIF llBox ** p_pllBox, MODIF ll **p_pll)
   =========================================================================*/
 void rm_ll(MODIF llBox ** p_pllBox, void **pv)
 {
+	assert(NULL!=*p_pllBox);
+	pthread_mutex_lock((*p_pllBox)->pMutex);
 	llBox * pllBox = *p_pllBox;
-	assert(NULL!=pllBox);
-	pthread_mutex_lock(pllBox->pMutex);
 
 	assert(pllBox->total > 0);
 	ll * pllToBeDel = pllBox->pHead;
@@ -147,7 +160,7 @@ void rm_ll(MODIF llBox ** p_pllBox, void **pv)
 	/// LEAK-CHK:pv should be freed outside this function
 	pllToBeDel->pNext=NULL;
 	pllToBeDel->pv=NULL;
-	FREE(pllToBeDel, pllBox->llBoxNm);
+	FREE(pllToBeDel, pllBox->llBoxNodeNm);
 
 	pthread_mutex_unlock(pllBox->pMutex);
 }
@@ -189,7 +202,7 @@ void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv))
 	ll * pllTemp = pllBox->pHead;
 	while(count--){
 		assert(NULL!=pllTemp);
-		printf("(%d):pllTemp->pv=%p", count, pllTemp->pv);
+		printf("(%d):pllTemp->pv=%p\n", count, pllTemp->pv);
 		if(NULL!=pvPrint){
 			pvPrint(pllTemp->pv);
 		}
@@ -211,8 +224,8 @@ void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv))
   =========================================================================*/
 void end_ll(MODIF llBox ** p_pllBox)
 {
+	pthread_mutex_lock((*p_pllBox)->pMutex);
 	llBox * pllBox=*p_pllBox;
-	pthread_mutex_lock(pllBox->pMutex);
 	char * str_name = NULL;
 	pthread_mutex_t * pMutexTemp = pllBox->pMutex;
 	str_name = (char *) MALLOC(strlen(pllBox->llBoxNm)+1, "boxToBeDelName");
@@ -222,6 +235,7 @@ void end_ll(MODIF llBox ** p_pllBox)
 	/// NOTE: pllBox->pMutex will be freed in the end, since still in used
 	pllBox->pMutex=NULL;
 	FREE(pllBox->llBoxNm, "str_name_init");
+	FREE(pllBox->llBoxNodeNm, "nodeName");
 	pllBox->llBoxNm=NULL;
 	FREE(pllBox, str_name);
 	pllBox=NULL;
