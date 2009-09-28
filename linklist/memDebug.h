@@ -85,6 +85,7 @@ void crop_assert_nohang(int line, const char * fileId);
 #define MARRAY_SHARED(A, B, C) crop_marray_shared(A, B, C, __LINE__, __FILE__)
 #define MEMSET(A, B, C, D) crop_memset(A, B, C, D, __LINE__, __FILE__)
 #define FREE_ARR(A, B) crop_free(A, B, __LINE__, __FILE__)
+#define MEM_PRINT_TABLE			crop_memPrintTable
 
 #define CROP_ASSERT_NOHANG(A) \
    if(A)\
@@ -111,6 +112,7 @@ void crop_assert_nohang(int line, const char * fileId);
 #define MARRAY_SHARED(A, B, C) NULL
 #define MEMSET(A, B, C, D) 
 #define FREE_ARR(A, B) NULL 
+#define MEM_PRINT_TABLE			NULL
 #endif
 /* ==================== <global variable> ======================= */
 

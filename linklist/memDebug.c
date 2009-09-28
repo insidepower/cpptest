@@ -107,6 +107,7 @@ int addNode(memLogObj * newNode, int line, const char * fileId, int thread_id,
    }
    else
    {
+	   CROP_ASSERT(pMemTail->pNext==NULL, __LINE__, __FILE__, NO_LOG);
       pMemTail->pNext=newNode;
       pMemTail = newNode;
    }

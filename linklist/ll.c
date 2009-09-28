@@ -48,8 +48,9 @@ void init_ll(llBox ** p_pllBox)
 	}
 
 	//------------------------------------------ init semaphore used by llBox//
-	sem_t sem_llBox;
-	if(sem_init(&sem_llBox, 0, 0) < 0){
+	/// create semaphore for multiple writers/reader using this link-list
+	sem_t * pSem_llBox = (sem_t *) MALLOC (sizeof(sem_t), "pSem_llBox");
+	if(-1==sem_init(pSem_llBox, 0, 0)){
 	//if(sem_init(&sem_llBox, 0, 0x80000000) < 0){
 		FREE(str_name, "str_name_init");
 		p_pllBox=NULL;
@@ -76,7 +77,7 @@ void init_ll(llBox ** p_pllBox)
 	pllBox->pMutex = pMutex;
 	pllBox->pHead = NULL;
 	pllBox->pTail = pllBox->pHead; //at start, pTail=pHead
-	pllBox->pSem = &sem_llBox;
+	pllBox->pSem = pSem_llBox;
 	pllBox->total = 0;
 	pllBox->llBoxNm=str_name;
 	pllBox->llBoxNodeNm=strNodeNm;
@@ -233,7 +234,12 @@ void end_ll(MODIF llBox ** p_pllBox)
 	str_name = (char *) MALLOC(strlen(pllBox->llBoxNm)+1, "boxToBeDelName");
 	strcpy(str_name, pllBox->llBoxNm);
 
-	/// TODO: free remaining ll node
+	//TODO: free remaining ll node
+
+	/// freeing the semaphore used
+	sem_destroy(pllBox->pSem);
+	FREE(pllBox->pSem, "pSem_llBox");
+
 	/// NOTE: pllBox->pMutex will be freed in the end, since still in used
 	pllBox->pMutex=NULL;
 	FREE(pllBox->llBoxNm, "str_name_init");
