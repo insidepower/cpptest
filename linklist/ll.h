@@ -1,3 +1,5 @@
+#ifndef __LL_H__
+#define __LL_H__
 /*==========================================================================
   ==  INCLUDES
   ==========================================================================*/
@@ -69,3 +71,4 @@ void end_ll(MODIF llBox ** p_pllBox);
 void rm_ll(MODIF llBox ** p_pllBox, void **pv);
 void get_ll(MODIF llBox ** p_pllBox, void **pv);
 void print_ll(CONST llBox * pllBox, void (*pvPrint)(void * pv));
+#endif //__LL_H__
