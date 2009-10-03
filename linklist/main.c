@@ -11,6 +11,10 @@
 /*==========================================================================
   ==  INCLUDES
   ==========================================================================*/
+#include <stdio.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "ll.h"
 #include "memDebug.h"
 /*==========================================================================
@@ -33,7 +37,7 @@ int main(void)
 {
 	//--------------------------------------------  init //
 	llBox * myll=NULL;
-	init_ll(&myll);
+	init_ll(&myll, "llBoxCap0");
 	if(NULL==myll){
 		PERROR("init_ll() failed to allocate\n");
 		crop_memPrintTable();
@@ -47,7 +51,7 @@ int main(void)
 	ptdUserData = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData");
 	strcpy(ptdUserData->name, "haha1");
 	ptdUserData->seq=cnt++;
-	add_ll(&myll, (void **)&ptdUserData);
+	add_ll(myll, (void **)&ptdUserData);
 	//assert(NULL!=pll);
 	//pll->pv=ptdUserData;
 
@@ -56,7 +60,7 @@ int main(void)
 	//pll->pv=ptdUserData;
 	strcpy(ptdUserData->name, "haha2");
 	ptdUserData->seq=cnt++;
-	add_ll(&myll, (void **)&ptdUserData);
+	add_ll(myll, (void **)&ptdUserData);
 
 	//------------------------------------------------- traverse node //
 	print_ll(myll, &print_userData);
@@ -64,11 +68,11 @@ int main(void)
 
 	//------------------------------------------------- delete node //
 	printf("deleting 1\n");
-	rm_ll(&myll, (void **) &ptdUserData);
+	rm_ll(myll, (void **) &ptdUserData);
 	FREE(ptdUserData, "tdUserData");
 	crop_memPrintTable();
 	printf("deleting 2\n");
-	rm_ll(&myll, (void **) &ptdUserData);
+	rm_ll(myll, (void **) &ptdUserData);
 	FREE(ptdUserData, "tdUserData");
 	crop_memPrintTable();
 
@@ -80,23 +84,23 @@ int main(void)
 	//pll2->pv=ptdUserData2;
 	strcpy(ptdUserData2->name, "haha1");
 	ptdUserData2->seq=cnt++;
-	add_ll(&myll, (void **)&ptdUserData2);
+	add_ll(myll, (void **)&ptdUserData2);
 
 	//assert(NULL!=pll2);
 	ptdUserData2 = (tdUserData *) MALLOC(sizeof(tdUserData), "tdUserData2");
 	//pll2->pv=ptdUserData2;
 	strcpy(ptdUserData2->name, "haha2");
 	ptdUserData2->seq=cnt++;
-	add_ll(&myll, (void **)&ptdUserData2);
+	add_ll(myll, (void **)&ptdUserData2);
 	crop_memPrintTable();
 
 	//------------------------------------------- get node (test semaphore)//
 	printf("deleting 1\n");
-	get_ll(&myll, (void **) &ptdUserData2);
+	get_ll(myll, (void **) &ptdUserData2);
 	FREE(ptdUserData2, "tdUserData2");
 	crop_memPrintTable();
 	printf("deleting 2\n");
-	get_ll(&myll, (void **) &ptdUserData2);
+	get_ll(myll, (void **) &ptdUserData2);
 	FREE(ptdUserData2, "tdUserData2");
 	crop_memPrintTable();
 

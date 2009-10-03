@@ -184,14 +184,14 @@ int removeNode(memLogObj * p_Prev, memLogObj * p_ToBeDeleted,
 		free(p_ToBeDeleted);
 	}
 	gTotalMemNode--;
-	//printf("removeNode - end (%s:%d - free (%p)\n", fileId, line, 
+	//printf("removeNode - end (%s:%d - free (%p)\n", fileId, line,
 	//p_ToBeDeleted->ptr_start);
 	//pthread_mutex_unlock(&mutexRecursive);
 	return 0;
 }
 
 
-unsigned char * crop_malloc(int size, char * objName, int line, 
+unsigned char * crop_malloc(int size, const char * objName, int line,
 		const char * fileId, int thread_id, int pid)
 {
    unsigned char * ptr = NULL;
@@ -199,7 +199,7 @@ unsigned char * crop_malloc(int size, char * objName, int line,
    memLogObj * pMemObj = NULL;
    //printf("crop_malloc: size (%d), objName(%s), fileId(%s)\n",
 	 //size, objName, fileId);
-  
+
    CROP_ASSERT(size > 0,line, fileId, NO_LOG);
    CROP_ASSERT(((objName != NULL) && (fileId != NULL)),line, fileId, NO_LOG);
 
@@ -255,7 +255,8 @@ unsigned char * crop_malloc(int size, char * objName, int line,
    return (pMemObj->ptr_start);
 }
 
-FLAG crop_memcpy(void * p_Dest, const void * p_Src, 
+
+FLAG crop_memcpy(void * p_Dest, const void * p_Src,
       int size, char * objName, int line, const char * fileId)
 {
    int i=0;
@@ -370,7 +371,8 @@ FLAG crop_memset(void * p_Dest, unsigned char p_CharPattern,
    return F_ERR;
 }
 
-FLAG crop_free(void * p_ptr, char * objName, int line, const char * fileId)
+FLAG crop_free(void * p_ptr, const char * objName, 
+				int line, const char * fileId)
 {
    int i=0;
    memLogObj * pTemp;

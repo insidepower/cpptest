@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <semaphore.h>
 
 #if defined (__cplusplus)
@@ -37,7 +38,8 @@ typedef struct mem_log_tag {
 
 /* ==================== <function prototype> ======================= */
 void crop_memPrintData(void * pChar, int size);
-unsigned char * crop_malloc(int size, char * objName, int line, const char * fileId, int thread_id, int pid);
+unsigned char * crop_malloc(int size, const char * objName,
+		int line, const char * fileId, int thread_id, int pid);
 void crop_memPrintTable(void);
 void crop_memPrintTableIndex(memLogObj * pMemObj);
 void crop_memPrintTableNoArr(void);
@@ -47,7 +49,8 @@ FLAG crop_memcpy(void * pDest, const void * pSrc,
       int size, char * objName, int line, const char * fileId);
 FLAG crop_memset(void * p_Dest, const unsigned char p_CharPattern, 
       int size, char * objName, int line, const char * fileId);
-FLAG crop_free(void * p_ptr, char * objName, int line, const char * fileId);
+FLAG crop_free(void * p_ptr, const char * objName, 
+				int line, const char * fileId);
 FLAG crop_mark(unsigned char * pChar, int size, char * objName, int line, const char * fileId);
 void crop_marray(void * pArr, int size, char * objName, int line, const char * fileId);
 void crop_mark_noset(void * p_Arr, int size, char * objName, int line, const char * fileId);
@@ -114,6 +117,7 @@ void crop_assert_nohang(int line, const char * fileId);
 #define FREE_ARR(A, B) NULL 
 #define MEM_PRINT_TABLE			NULL
 #endif
+
 /* ==================== <global variable> ======================= */
 
 extern memLogObj * pMemHead;
