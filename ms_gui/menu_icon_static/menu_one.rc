@@ -72,6 +72,22 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_CAN
 #pragma code_page(1252)
 #endif //_WIN32
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TOOLBAR DIALOGEX 0, 0, 98, 52
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "My Dialog Toolbar"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "&Press This Button",IDC_PRESS,7,7,84,14
+    PUSHBUTTON      "&Or This One",IDC_OTHER,7,31,84,14
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
@@ -88,6 +104,11 @@ BEGIN
         MENUITEM "&Go",                         ID_STUFF_GO
         MENUITEM "Go &Somewhere Else",          ID_STUFF_GOSOMEWHEREELSE
         , GRAYED
+    END
+    POPUP "&Dialog"
+    BEGIN
+        MENUITEM "&Show",                       ID_DIALOG_SHOW
+        MENUITEM "&Hide",                       ID_DIALOG_HIDE
     END
     POPUP "Help"
     BEGIN
