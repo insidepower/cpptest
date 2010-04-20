@@ -20,6 +20,10 @@
 #define ID_HELP_ABOUT                   40004
 #define ID_DIALOG_SHOW                  40005
 #define ID_DIALOG_HIDE                  40006
+#define ID_FILE_OPEN                    40007
+#define ID_FILE_SAVEAS                  40008
+#define ID_FILE_NEW                     40009
+
 #define IDC_STATIC                      -1
 
 
