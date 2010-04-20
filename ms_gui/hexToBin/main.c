@@ -28,7 +28,8 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					fgets(szSrcFileName, MAX_PATH, fp);
 					szSrcFileName[strlen(szSrcFileName)-1]='\0';
 					fgets(szDstFileName, MAX_PATH, fp);
-					szDstFileName[strlen(szDstFileName)-1]='\0';
+					// NOTE: immediately after last char of second line,
+					// 		 it is eof == NULL, therefore no need to append \0
 					SetWindowText(hEdit, szSrcFileName);
 					hEdit = GetDlgItem(hwnd, IDC_INPUT_DST);
 					SetWindowText(hEdit, szDstFileName);
