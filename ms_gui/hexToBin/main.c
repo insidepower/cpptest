@@ -67,7 +67,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 						ZeroMemory(&ofn, sizeof(ofn));
 						ofn.lStructSize = sizeof(OPENFILENAME);
 						ofn.hwndOwner = hwnd;
-						ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+						ofn.lpstrFilter = "All Files (*.*)\0*.*\0Text Files (*.txt)\0*.txt\0";
 						ofn.lpstrFile = szFileName;
 						ofn.nMaxFile = MAX_PATH;
 						ofn.lpstrDefExt = NULL; 
