@@ -1,12 +1,14 @@
 #include <windows.h>
 #include "resource.h"
 #include "string.h"
+#include "convertHexToBin.h"
 
 const char g_szClassName[] = "myWindowClass";
 HWND g_hChildMainGui = NULL;
 HWND g_hInfoDialogBox = NULL;
 char szSrcFileName[MAX_PATH]="";
 char szDstFileName[MAX_PATH]="";
+int isReversed=0;
 
 
 BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -28,7 +30,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 						ofn.lpstrFile = szFileName;
 						ofn.nMaxFile = MAX_PATH;
 						ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-						ofn.lpstrDefExt = "vhd";
+						ofn.lpstrDefExt = "vhd";//append if user forget to type the ext
 
 						if(GetOpenFileName(&ofn))
 						{
@@ -50,7 +52,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 						ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
 						ofn.lpstrFile = szFileName;
 						ofn.nMaxFile = MAX_PATH;
-						ofn.lpstrDefExt = "txt";
+						ofn.lpstrDefExt = NULL; 
 						ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
 						if(GetSaveFileName(&ofn))
@@ -58,6 +60,38 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							HWND hEdit = GetDlgItem(hwnd, IDC_INPUT_DST);
 							strcpy(szDstFileName, ofn.lpstrFile);
 							SetWindowText(hEdit, szDstFileName);
+						}
+					}
+					break;
+				case IDC_CHK_RVSD_BINARY:
+					{
+						HWND hChkBox = GetDlgItem(hwnd, IDC_CHK_RVSD_BINARY); 
+						BOOL checked = IsDlgButtonChecked(hChkBox, 1);
+						if (checked) {
+							CheckDlgButton(hwnd, 1, BST_UNCHECKED);
+							MessageBox(hwnd, "checked", "Info", 
+									MB_OK | MB_ICONINFORMATION);
+						}else{
+							CheckDlgButton(hwnd, 1, BST_CHECKED);
+							MessageBox(hwnd, "not checked", "Info", 
+									MB_OK | MB_ICONINFORMATION);
+						}
+					}
+					break;
+				case IDC_BTN_CONVERT:
+					{
+						if (0==strlen(szSrcFileName) || 0==strlen(szDstFileName)){
+							MessageBox(hwnd, "Please provide source and destination file", "Error", 
+									MB_OK | MB_ICONEXCLAMATION);
+						}else{
+							int result = convert(szSrcFileName, szDstFileName, isReversed);
+							if(FILE_SRC_OPEN_ERR == result){
+								MessageBox(hwnd, "Error in opening source file", "Error", 
+										MB_OK | MB_ICONEXCLAMATION);
+							}else if(FILE_DST_OPEN_ERR == result){
+								MessageBox(hwnd, "Error in opening destination file", "Error", 
+										MB_OK | MB_ICONEXCLAMATION);
+							}
 						}
 					}
 					break;
@@ -82,11 +116,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					ShowWindow(g_hChildMainGui, SW_SHOW);
 				} else {
 					MessageBox(hwnd, "CreateDialog returned NULL", "Warning!",  
-							MB_OK | MB_ICONINFORMATION);
+							MB_OK | MB_ICONEXCLAMATION);
 				}
 			}
 			break;
-
 			/// window size change
 		case WM_SIZE: break;
 		case WM_CLOSE:
@@ -156,10 +189,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while(GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		/// to get the alt-tab & hotkey working in the CreateDialog
-		//if(!IsDialogMessage(g_hInfoDialogBox, &Msg)){
-		TranslateMessage(&Msg);
-		DispatchMessage(&Msg);
-		//}
+		if(!IsDialogMessage(g_hInfoDialogBox, &Msg)){
+			TranslateMessage(&Msg);
+			DispatchMessage(&Msg);
+		}
 	}
 	return Msg.wParam;
 }
