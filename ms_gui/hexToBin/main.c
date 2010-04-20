@@ -1,7 +1,10 @@
 #include <windows.h>
 #include "resource.h"
 #include "string.h"
+#include "stdio.h" //fopen, fclose
 #include "convertHexToBin.h"
+
+#define H2BPATH_INI_FILE 		"h2bpath.ini"
 
 const char g_szClassName[] = "myWindowClass";
 HWND g_hChildMainGui = NULL;
@@ -15,6 +18,21 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 {
 	switch(Message)
 	{
+		case WM_INITDIALOG:
+			/// populate file path if H2BPATH_INI_FILE exist
+			{
+				FILE * fp = fopen(H2BPATH_INI_FILE, "r");
+				if(NULL!=fp){
+					HWND hEdit = GetDlgItem(hwnd, IDC_INPUT_SRC);
+					fgets(szSrcFileName, MAX_PATH, fp);
+					fgets(szDstFileName, MAX_PATH, fp);
+					SetWindowText(hEdit, szSrcFileName);
+					hEdit = GetDlgItem(hwnd, IDC_INPUT_DST);
+					SetWindowText(hEdit, szDstFileName);
+					fclose(fp);
+				}
+			}
+			break;
 		case WM_COMMAND:
 			switch(LOWORD(wParam))
 			{
@@ -80,6 +98,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					break;
 				case IDC_BTN_CONVERT:
 					{
+						/// to convert the Hexadecimal to binary
 						if (0==strlen(szSrcFileName) || 0==strlen(szDstFileName)){
 							MessageBox(hwnd, "Please provide source and destination file", "Error", 
 									MB_OK | MB_ICONEXCLAMATION);
@@ -92,6 +111,22 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 								MessageBox(hwnd, "Error in opening destination file", "Error", 
 										MB_OK | MB_ICONEXCLAMATION);
 							}
+						}
+					}
+					break;
+				case IDC_BTN_SAVE:
+					{
+						/// to save the source and destination path for next ease of use
+						FILE * fp = fopen(H2BPATH_INI_FILE, "w");
+						if (NULL!=fp){
+							fprintf(fp, szSrcFileName);
+							fprintf(fp, "\n");
+							fprintf(fp, szDstFileName);
+							fprintf(fp, "\n");
+							fclose(fp);
+						}else{
+							MessageBox(hwnd, "Error in saving path", "Error", 
+										MB_OK | MB_ICONEXCLAMATION);
 						}
 					}
 					break;
