@@ -101,10 +101,9 @@ int convert(const unsigned char * src_filename,
 	//fp_dst_reversed = fopen("binary_reversed.txt", "w");
 
 	/// convert the hex to binary in each line\n
-	while (!feof(fp_src)) {
+	while (NULL!=fgets(line, LINE_SIZE, fp_src)) {
 		int first_hex = 0;
 		int second_hex = 0;
-		fgets(line, LINE_SIZE, fp_src);
 		//printf("%s", line);
 
 		/// .get the pattern of x" which mark the beginning of data\n
@@ -129,7 +128,7 @@ int convert(const unsigned char * src_filename,
 			}
 
 			/// ..increment to next pointer after second hex char
-			ptr++;
+			ptr+=2;
 			ptr = strstr(ptr, "x\"");
 		}
 	}
