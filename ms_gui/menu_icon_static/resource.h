@@ -3,10 +3,11 @@
 // Used by menu_one.rc
 //
 #define IDR_MYMENU                      101
-#define IDD_TOOLBAR                     101
+#define IDD_TOOLBAR                     105
 #define IDI_MYICON                      102
 #define IDD_DIALOGBAR                   103
 #define IDD_ABOUT                       104
+#define IDC_MAIN_EDIT					106
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON2                     1001
 #define IDC_EDIT1                       1002
