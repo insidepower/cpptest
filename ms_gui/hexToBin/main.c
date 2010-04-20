@@ -12,7 +12,7 @@ HWND g_hInfoDialogBox = NULL;
 char szSrcFileName[MAX_PATH]="";
 char szDstFileName[MAX_PATH]="";
 int isReversed=0;
-
+int isDebug=0;
 
 BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -22,10 +22,13 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 			/// populate file path if H2BPATH_INI_FILE exist
 			{
 				FILE * fp = fopen(H2BPATH_INI_FILE, "r");
+				unsigned char * p_str = NULL;
 				if(NULL!=fp){
 					HWND hEdit = GetDlgItem(hwnd, IDC_INPUT_SRC);
 					fgets(szSrcFileName, MAX_PATH, fp);
+					szSrcFileName[strlen(szSrcFileName)-1]='\0';
 					fgets(szDstFileName, MAX_PATH, fp);
+					szDstFileName[strlen(szDstFileName)-1]='\0';
 					SetWindowText(hEdit, szSrcFileName);
 					hEdit = GetDlgItem(hwnd, IDC_INPUT_DST);
 					SetWindowText(hEdit, szDstFileName);
@@ -83,16 +86,21 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					break;
 				case IDC_CHK_RVSD_BINARY:
 					{
-						HWND hChkBox = GetDlgItem(hwnd, IDC_CHK_RVSD_BINARY); 
-						BOOL checked = IsDlgButtonChecked(hChkBox, 1);
+						BOOL checked = IsDlgButtonChecked(hwnd, IDC_CHK_RVSD_BINARY);
 						if (checked) {
-							CheckDlgButton(hwnd, 1, BST_UNCHECKED);
-							MessageBox(hwnd, "checked", "Info", 
-									MB_OK | MB_ICONINFORMATION);
+							isReversed = 1;
 						}else{
-							CheckDlgButton(hwnd, 1, BST_CHECKED);
-							MessageBox(hwnd, "not checked", "Info", 
-									MB_OK | MB_ICONINFORMATION);
+							isReversed = 0;
+						}
+					}
+					break;
+				case IDC_CHK_DEBUG:
+					{
+						BOOL checked = IsDlgButtonChecked(hwnd, IDC_CHK_DEBUG);
+						if (checked) {
+							isDebug = 1;
+						}else{
+							isDebug = 0;
 						}
 					}
 					break;
@@ -103,7 +111,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							MessageBox(hwnd, "Please provide source and destination file", "Error", 
 									MB_OK | MB_ICONEXCLAMATION);
 						}else{
-							int result = convert(szSrcFileName, szDstFileName, isReversed);
+							int result = convert(szSrcFileName, szDstFileName, isReversed, isDebug);
 							if(FILE_SRC_OPEN_ERR == result){
 								MessageBox(hwnd, "Error in opening source file", "Error", 
 										MB_OK | MB_ICONEXCLAMATION);
@@ -122,7 +130,6 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							fprintf(fp, szSrcFileName);
 							fprintf(fp, "\n");
 							fprintf(fp, szDstFileName);
-							fprintf(fp, "\n");
 							fclose(fp);
 						}else{
 							MessageBox(hwnd, "Error in saving path", "Error", 
@@ -207,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			g_szClassName,
 			"Hexadecimal to Binary Converter",
 			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT, CW_USEDEFAULT, 500, 190,
+			CW_USEDEFAULT, CW_USEDEFAULT, 500, 180,
 			NULL, NULL, hInstance, NULL);
 
 	if(hwnd == NULL)
