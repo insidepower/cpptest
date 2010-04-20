@@ -110,7 +110,7 @@ BEGIN
         MENUITEM "&Show",                       ID_DIALOG_SHOW
         MENUITEM "&Hide",                       ID_DIALOG_HIDE
     END
-    POPUP "Help"
+    POPUP "&Help"
     BEGIN
         MENUITEM "About",                       ID_HELP_ABOUT
     END

@@ -177,8 +177,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// Step 3: The Message Loop
 	while(GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
-		TranslateMessage(&Msg);
-		DispatchMessage(&Msg);
+		// to get the alt-tab & hotkey working in the CreateDialog
+		if(!IsDialogMessage(g_hToolbar, &Msg)){
+			TranslateMessage(&Msg);
+			DispatchMessage(&Msg);
+		}
 	}
 	return Msg.wParam;
 }
