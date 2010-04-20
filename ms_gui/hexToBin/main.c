@@ -36,6 +36,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					fclose(fp);
 				}
 			}
+			//SendMessage(hwnd, WM_NEXTDLGCTL, 0L, 0L);
 			break;
 		case WM_COMMAND:
 			switch(LOWORD(wParam))
@@ -140,6 +141,25 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					break;
 			}
 			break;
+		case WM_CHAR:
+			{
+				char myStr[50];
+				MessageBox(NULL, "WM_CHAR encountered in dialog", "trace", 0);
+				if(wParam = '\t') {
+					MessageBox(NULL, "Tab encountered in dialog", "trace", 0);
+					//SendMessage(hwnd, WM_NEXTDLGCTL, 0L, 0L);
+					return TRUE;
+				}
+			}
+			break;
+		case WM_NEXTDLGCTL:
+			{
+				char myStr[50];
+
+				sprintf(myStr, "WM_NEXTDLGCTL in dialog");
+				MessageBox(NULL, myStr, "trace", MB_OK);
+			}
+			break;
 		default:
 			return FALSE;
 	}
@@ -165,6 +185,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 			/// window size change
 		case WM_SIZE: break;
+		case WM_CHAR:
+					  {
+						  char myStr[50];
+						  MessageBox(NULL, "WM_CHAR encountered in main", "trace", 0);
+						  if(wParam = '\t') {
+							  MessageBox(NULL, "Tab encountered in main", "trace", 0);
+							  //SendMessage(hwnd, WM_NEXTDLGCTL, 0L, 0L);
+							  return TRUE;
+						  }
+					  }
+					  break;
+		case WM_NEXTDLGCTL:
+					  {
+						  char myStr[50];
+
+						  //sprintf(myStr, "WM_NEXTDLGCTL in main");
+						  //MessageBox(NULL, myStr, "trace", MB_OK);
+					  }
+					  break;
 		case WM_CLOSE:
 					  DestroyWindow(hwnd);
 					  break;
@@ -232,7 +271,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while(GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		/// to get the alt-tab & hotkey working in the CreateDialog
-		if(!IsDialogMessage(g_hInfoDialogBox, &Msg)){
+		//if(!IsDialogMessage(g_hInfoDialogBox, &Msg)){
+		//if (g_hInfoDialogBox == 0 || !IsWindow(g_hInfoDialogBox) || !IsDialogMessage (g_hChildMainGui, &Msg)){
+		if (!IsDialogMessage (g_hChildMainGui, &Msg)){
 			TranslateMessage(&Msg);
 			DispatchMessage(&Msg);
 		}
