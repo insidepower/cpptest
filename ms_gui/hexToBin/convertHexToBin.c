@@ -1,10 +1,15 @@
+/*-------------------------------------------------------------------------
+Includes
+-------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "convertHexToBin.h"
 
+/*-------------------------------------------------------------------------
+ Macros
+ -------------------------------------------------------------------------*/
 //#define DEBUG
-
 #ifdef DEBUG
 #define FPRINTF(A,B) 		fprintf(fp_dst, "%c%c=%s%s\n", ptr[0], ptr[1], A, B)
 #define FPRINTF_R(A,B) 	    \
@@ -16,6 +21,9 @@
 
 #define LINE_SIZE 	(100)
 
+/*-------------------------------------------------------------------------
+ Global Variables
+ -------------------------------------------------------------------------*/
 /// hex to binary conversion array
 char ar_hex_to_bin[16][5] = {
 "0000",
@@ -83,6 +91,13 @@ int conv_hex_bin(char hex)
 	}
 }
 
+/*-------------------------------------------------------------------------
+ Functions
+ -------------------------------------------------------------------------*/
+/*========================================================================
+ convert
+ =========================================================================*/
+/** \brief main function to convert hexadecimal to binary */
 int convert(const unsigned char * src_filename,
 			const unsigned char * dst_filename, int isReversed, int isDebug)
 {

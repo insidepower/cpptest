@@ -37,11 +37,11 @@ BEGIN
     EDITTEXT        IDC_INPUT_DST,69,36,180,14,ES_AUTOHSCROLL | ES_READONLY
     PUSHBUTTON      "Browse",IDC_BTN_INPUT_DST,267,36,50,14
     PUSHBUTTON      "&Convert",IDC_BTN_CONVERT,267,58,50,14
-    CONTROL         "Reversed Binary",IDC_CHK_RVSD_BINARY,"Button",
+    CONTROL         "&Reversed Binary",IDC_CHK_RVSD_BINARY,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,27,60,68,10
     PUSHBUTTON      "&Save Path",IDC_BTN_SAVE,199,59,50,14
     GROUPBOX        "HexToBinary",IDC_STATIC,7,3,316,79
-    CONTROL         "Debug",IDC_CHK_DEBUG,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "&Debug",IDC_CHK_DEBUG,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,105,60,37,10
 END
 

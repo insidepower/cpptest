@@ -1,22 +1,36 @@
+/*-------------------------------------------------------------------------
+Includes
+-------------------------------------------------------------------------*/
 #include <windows.h>
 #include <commctrl.h>
 #include "resource.h"
 #include "string.h"
 #include "stdio.h" //fopen, fclose
 #include "convertHexToBin.h"
-
+/*-------------------------------------------------------------------------
+ Macros
+ -------------------------------------------------------------------------*/
 #define H2BPATH_INI_FILE 		"h2bpath.ini"
-
+/*-------------------------------------------------------------------------
+ Global Variables
+ -------------------------------------------------------------------------*/
 const char g_szClassName[] = "myWindowClass";
-HWND g_hChildMainGui = NULL;
+HWND g_hModelessDlgBox = NULL;
 HWND g_hInfoDialogBox = NULL;
 HWND hStatus = NULL;
 char szSrcFileName[MAX_PATH]="";
 char szDstFileName[MAX_PATH]="";
 int isReversed=0;
 int isDebug=0;
-
-BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+/*-------------------------------------------------------------------------
+ Functions
+ -------------------------------------------------------------------------*/
+/*========================================================================
+ DialogBoxProc
+ =========================================================================*/
+/** \brief Process the Dialog Box command */
+BOOL CALLBACK DialogBoxProc(HWND hwnd, UINT Message,
+							   WPARAM wParam, LPARAM lParam)
 {
 	switch(Message)
 	{
@@ -31,7 +45,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					szSrcFileName[strlen(szSrcFileName)-1]='\0';
 					fgets(szDstFileName, MAX_PATH, fp);
 					// NOTE: immediately after last char of second line,
-					// 		 it could be eof == NULL, therefore no need to append \0
+					// 		 it could be eof == NULL, thus no need to append \0
 					if('\n' == szDstFileName[strlen(szDstFileName)-1]){
 						/// extra check, just in case last char is newline
 						szDstFileName[strlen(szDstFileName)-1]='\0';
@@ -45,8 +59,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 			//SendMessage(hwnd, WM_NEXTDLGCTL, 0L, 0L);
 			break;
 		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
+			switch(LOWORD(wParam)){
 				case IDC_BTN_INPUT_SRC:
 					{
 						OPENFILENAME ofn;
@@ -81,7 +94,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 						ofn.lpstrFilter = "All Files (*.*)\0*.*\0Text Files (*.txt)\0*.txt\0";
 						ofn.lpstrFile = szFileName;
 						ofn.nMaxFile = MAX_PATH;
-						ofn.lpstrDefExt = NULL; 
+						ofn.lpstrDefExt = NULL;
 						ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
 						if(GetSaveFileName(&ofn))
@@ -148,7 +161,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							fclose(fp);
 						}else{
 							MessageBox(hwnd, "Error in saving path", "Error", 
-										MB_OK | MB_ICONEXCLAMATION);
+									MB_OK | MB_ICONEXCLAMATION);
 						}
 						SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Path saved!");
 					}
@@ -179,6 +192,10 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 	return TRUE;
 }
 
+/*========================================================================
+ WndProc
+ =========================================================================*/
+/** \brief Process the main window command */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
@@ -186,10 +203,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_CREATE:
 			/// create child window
 			{
-				g_hChildMainGui = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_FORMVIEW),
-						hwnd, childMainGuiProc);
-				if(g_hChildMainGui != NULL) {
-					ShowWindow(g_hChildMainGui, SW_SHOW);
+				g_hModelessDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_FORMVIEW),
+						hwnd, DialogBoxProc);
+				if(g_hModelessDlgBox != NULL) {
+					ShowWindow(g_hModelessDlgBox, SW_SHOW);
 				} else {
 					MessageBox(hwnd, "CreateDialog returned NULL", "Warning!",  
 							MB_OK | MB_ICONEXCLAMATION);
@@ -206,21 +223,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE: break;
 		case WM_CHAR:
 					  {
-						  MessageBox(NULL, "WM_CHAR encountered in main", "trace", 0);
 						  if(wParam = '\t') {
-							  MessageBox(NULL, "Tab encountered in main", "trace", 0);
-							  //SendMessage(hwnd, WM_NEXTDLGCTL, 0L, 0L);
+							  //MessageBox(NULL, "Tab encountered in main", "trace", 0);
+							  SendMessage(g_hModelessDlgBox, WM_NEXTDLGCTL, 0L, 0L);
 							  return TRUE;
 						  }
 					  }
 					  break;
-		case WM_NEXTDLGCTL:
-					  {
-						  //char myStr[50];
-						  //sprintf(myStr, "WM_NEXTDLGCTL in main");
-						  //MessageBox(NULL, myStr, "trace", MB_OK);
-					  }
-					  break;
+		case WM_NEXTDLGCTL: break;
 		case WM_CLOSE:
 					  DestroyWindow(hwnd);
 					  break;
@@ -235,7 +245,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-/// main function
+/*========================================================================
+ WinMain
+ =========================================================================*/
+/** \brief Main function */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		LPSTR lpCmdLine, int nCmdShow)
 {
@@ -243,7 +256,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	HWND hwnd;
 	MSG Msg;
 
-	//Step 1: Registering the Window Class
+	/// Registering the Window Class
 	wc.cbSize        = sizeof(WNDCLASSEX);
 	wc.style         = 0;
 	wc.lpfnWndProc   = WndProc;
@@ -265,7 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		return 0;
 	}
 
-	// Step 2: Creating the Window
+	/// Creating the Window
 	hwnd = CreateWindowEx(
 			WS_EX_CLIENTEDGE,
 			g_szClassName,
@@ -289,9 +302,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while(GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		/// to get the alt-tab & hotkey working in the CreateDialog
-		//if(!IsDialogMessage(g_hInfoDialogBox, &Msg)){
-		//if (g_hInfoDialogBox == 0 || !IsWindow(g_hInfoDialogBox) || !IsDialogMessage (g_hChildMainGui, &Msg)){
-		if (!IsDialogMessage (g_hChildMainGui, &Msg)){
+		//if (g_hInfoDialogBox == 0 || !IsWindow(g_hInfoDialogBox) || !IsDialogMessage (g_hModelessDlgBox, &Msg)){
+		if (!IsDialogMessage (g_hModelessDlgBox, &Msg)){
 			TranslateMessage(&Msg);
 			DispatchMessage(&Msg);
 		}
