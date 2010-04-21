@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <commctrl.h>
 #include "resource.h"
 #include "string.h"
 #include "stdio.h" //fopen, fclose
@@ -9,6 +10,7 @@
 const char g_szClassName[] = "myWindowClass";
 HWND g_hChildMainGui = NULL;
 HWND g_hInfoDialogBox = NULL;
+HWND hStatus = NULL;
 char szSrcFileName[MAX_PATH]="";
 char szDstFileName[MAX_PATH]="";
 int isReversed=0;
@@ -117,18 +119,21 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							MessageBox(hwnd, "Please provide source and destination file", "Error", 
 									MB_OK | MB_ICONEXCLAMATION);
 						}else{
+							char myStr[MAX_PATH+50];
 							int result = convert(szSrcFileName, szDstFileName, isReversed, isDebug);
 							if(FILE_SRC_OPEN_ERR == result){
-								char myStr[MAX_PATH+50];
 								sprintf(myStr, "Error in opening source file %s", szSrcFileName);
 								MessageBox(hwnd, myStr, "Error",
 										MB_OK | MB_ICONEXCLAMATION);
+								break;
 							}else if(FILE_DST_OPEN_ERR == result){
-								char myStr[MAX_PATH+50];
 								sprintf(myStr, "Error in opening destination file %s", szDstFileName);
 								MessageBox(hwnd, myStr, "Error",
 										MB_OK | MB_ICONEXCLAMATION);
+								break;
 							}
+							sprintf(myStr, "Conversion completed. File write to %s!", szDstFileName);
+							SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)myStr);
 						}
 					}
 					break;
@@ -145,6 +150,7 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 							MessageBox(hwnd, "Error in saving path", "Error", 
 										MB_OK | MB_ICONEXCLAMATION);
 						}
+						SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Path saved!");
 					}
 					break;
 			}
@@ -189,6 +195,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							MB_OK | MB_ICONEXCLAMATION);
 				}
 			}
+			/// create status bar
+			hStatus = CreateWindowEx(0, STATUSCLASSNAME, NULL,
+				//WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0,
+				WS_CHILD | WS_VISIBLE, 0, 0, 0, 0,
+				hwnd, (HMENU)IDC_MAIN_STATUS, GetModuleHandle(NULL), NULL);
+			SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Hi there :)");
 			break;
 			/// window size change
 		case WM_SIZE: break;
@@ -258,8 +270,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			WS_EX_CLIENTEDGE,
 			g_szClassName,
 			"Hexadecimal to Binary Converter",
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT, CW_USEDEFAULT, 500, 180,
+			//WS_OVERLAPPEDWINDOW,
+			WS_OVERLAPPED| WS_CAPTION | WS_SYSMENU,
+			CW_USEDEFAULT, CW_USEDEFAULT, 505, 185,
 			NULL, NULL, hInstance, NULL);
 
 	if(hwnd == NULL)
