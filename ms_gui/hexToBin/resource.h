@@ -10,6 +10,8 @@
 #define IDC_BTN_CONVERT                 1004
 #define IDC_CHK_RVSD_BINARY             1005
 #define IDC_BTN_SAVE                    1006
+#define IDC_CHK_DEBUG                   1007
+#define IDC_MAIN_STATUS					1008
 
 // Next default values for new objects
 // 
