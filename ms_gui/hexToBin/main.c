@@ -217,7 +217,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				//WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0,
 				WS_CHILD | WS_VISIBLE, 0, 0, 0, 0,
 				hwnd, (HMENU)IDC_MAIN_STATUS, GetModuleHandle(NULL), NULL);
-			SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Hi there :)");
+			SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Hex to binary converter "
+					"(source hex pattern must be in the form of x\"<hex1><hex2>\", e.g. x\"A5\")");
 			break;
 			/// window size change
 		case WM_SIZE: break;
