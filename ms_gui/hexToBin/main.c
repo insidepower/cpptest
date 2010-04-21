@@ -29,7 +29,11 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 					szSrcFileName[strlen(szSrcFileName)-1]='\0';
 					fgets(szDstFileName, MAX_PATH, fp);
 					// NOTE: immediately after last char of second line,
-					// 		 it is eof == NULL, therefore no need to append \0
+					// 		 it could be eof == NULL, therefore no need to append \0
+					if('\n' == szDstFileName[strlen(szDstFileName)-1]){
+						/// extra check, just in case last char is newline
+						szDstFileName[strlen(szDstFileName)-1]='\0';
+					}
 					SetWindowText(hEdit, szSrcFileName);
 					hEdit = GetDlgItem(hwnd, IDC_INPUT_DST);
 					SetWindowText(hEdit, szDstFileName);
@@ -115,10 +119,14 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 						}else{
 							int result = convert(szSrcFileName, szDstFileName, isReversed, isDebug);
 							if(FILE_SRC_OPEN_ERR == result){
-								MessageBox(hwnd, "Error in opening source file", "Error", 
+								char myStr[MAX_PATH+50];
+								sprintf(myStr, "Error in opening source file %s", szSrcFileName);
+								MessageBox(hwnd, myStr, "Error",
 										MB_OK | MB_ICONEXCLAMATION);
 							}else if(FILE_DST_OPEN_ERR == result){
-								MessageBox(hwnd, "Error in opening destination file", "Error", 
+								char myStr[MAX_PATH+50];
+								sprintf(myStr, "Error in opening destination file %s", szDstFileName);
+								MessageBox(hwnd, myStr, "Error",
 										MB_OK | MB_ICONEXCLAMATION);
 							}
 						}
@@ -143,7 +151,6 @@ BOOL CALLBACK childMainGuiProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 			break;
 		case WM_CHAR:
 			{
-				char myStr[50];
 				MessageBox(NULL, "WM_CHAR encountered in dialog", "trace", 0);
 				if(wParam = '\t') {
 					MessageBox(NULL, "Tab encountered in dialog", "trace", 0);
@@ -187,7 +194,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE: break;
 		case WM_CHAR:
 					  {
-						  char myStr[50];
 						  MessageBox(NULL, "WM_CHAR encountered in main", "trace", 0);
 						  if(wParam = '\t') {
 							  MessageBox(NULL, "Tab encountered in main", "trace", 0);
@@ -198,8 +204,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					  break;
 		case WM_NEXTDLGCTL:
 					  {
-						  char myStr[50];
-
+						  //char myStr[50];
 						  //sprintf(myStr, "WM_NEXTDLGCTL in main");
 						  //MessageBox(NULL, myStr, "trace", MB_OK);
 					  }
