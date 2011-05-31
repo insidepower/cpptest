@@ -28,6 +28,7 @@ int main(void)
 	
 	WaitForSingleObject(hThread, INFINITE);
 	ResumeThread(first_thread.hThread);
+	ResumeThread(second_thread.hThread);
 	WaitForSingleObject(first_thread.hThread, INFINITE);
 	Sleep(5000);
 	Sleep(0);
