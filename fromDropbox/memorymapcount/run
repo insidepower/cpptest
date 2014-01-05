@@ -1,0 +1,8 @@
+if [ "$#" -eq 0 ]; then
+make &&
+#./memory_map > /home/share/memoryMap.delete
+./memory_map ;
+elif [ "$#" -gt 0 ]; then
+make &&
+./memory_map > /home/share/memoryMap.delete
+fi

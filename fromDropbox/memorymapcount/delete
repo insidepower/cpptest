@@ -1,0 +1,15 @@
+===============================================================
+ i:       name, 	physAddr   	size       
+===============================================================
+  :      Linux, 	0x80000000   	0x4000000    	65536 kB 	   64 MB
+ 0:  RESETCTRL, 	0x84000000   	0x80         	0     kB 	    0 MB
+ 1:       DDR2, 	0x84000080   	0x1EFFF80    	31743 kB 	   30 MB
+ 2: DSPLINKMEM, 	0x85F00000   	0x5000       	20    kB 	    0 MB
+ 3: DSPLINKMEM1, 	0x85F05000   	0x7FAFFF     	8171  kB 	    7 MB
+ 4:    POOLMEM, 	0x866FFFFF   	0x1400000    	20480 kB 	   20 MB
+ 5:    DSPIRAM, 	0x11800000   	0x10000      	64    kB 	    0 MB
+ 6:  DSPL1DRAM, 	0x11F04000   	0xC000       	48    kB 	    0 MB
+ 7: POOL_MSGQ_ID, 	0x87AFFFFF   	0x500000     	5120  kB 	    5 MB
+  :      Total, 	0x87FFFFFF   	0x801BFFF    	131183 kB 	  128 MB
+sizeof memory_array 8 480 60
+sizeof DSPLINK SHMEM = (5000 + 7FAFFF ) = 7FFFFF 

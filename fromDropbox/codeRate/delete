@@ -1,0 +1,12 @@
+0:	bitToSend=1029, actualBitToSend=676, bitToSend/1024=1
+j=0: actualBitToSend=676, remainingBit=5, bitToSend=0
+
+1:	bitToSend=1200, actualBitToSend=676, bitToSend/1024=1
+j=0: actualBitToSend=676, remainingBit=176, bitToSend=0
+
+2:	bitToSend=2000, actualBitToSend=676, bitToSend/1024=1
+actualBitToSend=1301, ActualRemainingBit=976, mappedRemainingBit=961, bitToSend=625
+
+3:	bitToSend=1500, actualBitToSend=676, bitToSend/1024=1
+actualBitToSend=901, ActualRemainingBit=476, mappedRemainingBit=441, bitToSend=225
+

@@ -1,0 +1,67 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+BOOL	MemDebug.h	/^}BOOL; $/;"	t	typeref:enum:__anon1
+B_NO	MemDebug.h	/^   B_NO=0, $/;"	e	enum:__anon1
+B_YES	MemDebug.h	/^   B_YES$/;"	e	enum:__anon1
+CROP_FREE	MemDebug.h	70;"	d
+CROP_FREE	MemDebug.h	76;"	d
+CROP_MALLOC	MemDebug.h	68;"	d
+CROP_MALLOC	MemDebug.h	74;"	d
+CROP_MARK	MemDebug.h	71;"	d
+CROP_MARK	MemDebug.h	77;"	d
+CROP_MARRAY	MemDebug.h	72;"	d
+CROP_MARRAY	MemDebug.h	78;"	d
+CROP_MEMCPY	MemDebug.h	69;"	d
+CROP_MEMCPY	MemDebug.h	75;"	d
+CROP_assert	MemDebug.c	20;"	d	file:
+CROP_assert	MemDebug.c	27;"	d	file:
+DEBUG_MEM	MemDebug.h	64;"	d
+FENCE_BORDER	MemDebug.h	48;"	d
+FENCE_BOTTOM	MemDebug.h	50;"	d
+FENCE_BYTE_TOTAL	MemDebug.h	51;"	d
+FENCE_TOP	MemDebug.h	49;"	d
+FID	MemDebug.c	10;"	d	file:
+FID	main.c	5;"	d	file:
+FLAG	MemDebug.h	/^}FLAG;$/;"	t	typeref:enum:__anon2
+F_ERR	MemDebug.h	/^   F_ERR=0,$/;"	e	enum:__anon2
+F_NO_ERR	MemDebug.h	/^   F_NO_ERR$/;"	e	enum:__anon2
+GARBAGE	MemDebug.h	52;"	d
+MAIN_C	MemDebug.h	60;"	d
+MEMDEBUG_C	MemDebug.h	61;"	d
+MEM_LOG_ARR_SIZE	MemDebug.h	53;"	d
+NO_LOG	MemDebug.h	56;"	d
+UNNAMED	MemDebug.h	57;"	d
+__MEMDEBUG_H__	MemDebug.h	2;"	d
+addNode	MemDebug.c	/^int addNode(memLogObj * newNode)$/;"	f
+crop_free	MemDebug.c	/^FLAG crop_free(unsigned char * pChar, char * objName, int line, const char * fileId)$/;"	f
+crop_malloc	MemDebug.c	/^unsigned char * crop_malloc(int size, char * objName, int line, const char * fileId)$/;"	f
+crop_mark	MemDebug.c	/^FLAG crop_mark(unsigned char * pChar, int size, char * objName, int line, const char * fileId)$/;"	f
+crop_marray	MemDebug.c	/^void crop_marray(unsigned char * pArr, int size, char * objName, int line, const char * fileId)$/;"	f
+crop_memChkFence	MemDebug.c	/^FLAG crop_memChkFence(void)$/;"	f
+crop_memPrintData	MemDebug.c	/^void crop_memPrintData(void * pChar, int size)$/;"	f
+crop_memPrintTable	MemDebug.c	/^void crop_memPrintTable(void)$/;"	f
+crop_memPrintTableIndex	MemDebug.c	/^void crop_memPrintTableIndex(memLogObj * pMemObj)$/;"	f
+crop_memcpy	MemDebug.c	/^FLAG crop_memcpy(void * p_Dest, const void * p_Src, $/;"	f
+fenceByte	MemDebug.c	/^unsigned char fenceByte[4]={0xFA, 0xCA, 0xDE, 0x69};$/;"	v
+fileId	MemDebug.h	/^   const char * fileId;$/;"	m	struct:mem_log_tag
+freqUsage	MemDebug.h	/^   int freqUsage;$/;"	m	struct:mem_log_tag
+gTotalMemNode	MemDebug.c	/^int gTotalMemNode=0;$/;"	v
+initData	main.c	/^unsigned char * initData(int size)$/;"	f
+isArray	MemDebug.h	/^   int isArray;$/;"	m	struct:mem_log_tag
+len	MemDebug.h	/^   int len;$/;"	m	struct:mem_log_tag
+main	main.c	/^int main(void)$/;"	f
+memLogObj	MemDebug.h	/^} memLogObj;$/;"	t	typeref:struct:mem_log_tag
+mem_log_tag	MemDebug.h	/^typedef struct mem_log_tag {$/;"	s
+mutex_addNode	MemDebug.c	/^pthread_mutex_t mutex_addNode=PTHREAD_MUTEX_INITIALIZER;$/;"	v
+objName	MemDebug.h	/^   char * objName;$/;"	m	struct:mem_log_tag
+pMemHead	MemDebug.c	/^memLogObj * pMemHead = NULL;$/;"	v
+pMemTail	MemDebug.c	/^memLogObj * pMemTail = NULL;$/;"	v
+pNext	MemDebug.h	/^   struct mem_log_tag * pNext;$/;"	m	struct:mem_log_tag	typeref:struct:mem_log_tag::mem_log_tag
+ptr	MemDebug.h	/^   unsigned char * ptr; \/\/will include 2*FENCE_TOP+data+2*FENCE_BOTTOM$/;"	m	struct:mem_log_tag
+removeNode	MemDebug.c	/^int removeNode(memLogObj * p_memLogObj)$/;"	f
+throwErr	MemDebug.c	/^void throwErr(int line, const char * fileId, memLogObj * pMemObj)$/;"	f
+used	MemDebug.h	/^   int used;$/;"	m	struct:mem_log_tag
