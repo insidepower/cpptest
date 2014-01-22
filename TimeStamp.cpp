@@ -22,17 +22,6 @@ int main(void){
 
 #endif
 
-#include <stdio.h>
-
-int main(void){
-	char mgmtType[][30] = {"CE Request", "CE Response", "Stat Requese", 
-   								"Stat Response", "Stat Counter Reset"};
-	
-	char * ptr = mgmtType[3];
-	printf("ptr = %s\n", ptr);
-
-	return 0;
-}
 
 
 
