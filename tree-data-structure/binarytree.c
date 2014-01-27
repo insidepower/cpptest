@@ -7,6 +7,7 @@ typedef struct node {
 	int value;
 	struct node * pLeft;
 	struct node * pRight;
+	void * pExtra;
 } node;
 
 void init_node(node *pNode, int a){
